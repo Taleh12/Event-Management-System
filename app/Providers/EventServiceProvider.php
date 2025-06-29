@@ -27,6 +27,9 @@ class EventServiceProvider extends ServiceProvider
     \App\Events\CampaignStarted::class => [
       \App\Listeners\SendCampaignToSubscribers::class,
     ],
+    \App\Events\ProductViewed::class => [
+      \App\Listeners\UpdateProductReadCountListener::class,
+    ],
   ];
 
   /**

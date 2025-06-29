@@ -1,8 +1,11 @@
 <?php
 
+use App\Events\ProductViewed;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FileController;
+use App\Models\Product;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 // Controllers
@@ -25,4 +28,21 @@ Route::prefix('files')->group(function () {
     Route::delete('/{filename}', [FileController::class, 'delete']);
     Route::get('/download/{filename}', [FileController::class, 'download']);
     Route::get('/exists/{filename}', [FileController::class, 'exists']);
+});
+
+
+Route::get('/products/{id}', function ($id) {
+    $cacheKey = "product:{$id}";
+
+    $product = Cache::remember($cacheKey, 60, function () use ($id) {
+        return Product::findOrFail($id);
+    });
+
+    // Event fire et (Queue ilə RabbitMQ-ya düşəcək)
+    event(new ProductViewed($product));
+
+    return response()->json([
+        'product' => $product,
+        'message' => 'Product fetched (DB or cache), event fired!'
+    ]);
 });

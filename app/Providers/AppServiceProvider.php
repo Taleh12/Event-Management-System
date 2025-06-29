@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Product;
 use App\Models\Subscription;
+use App\Observers\ProductObserver;
 use App\Observers\SubscriptionObserver;
 use App\Repositories\EventRepository;
 use App\Repositories\EventRepositoryInterface;
@@ -24,5 +26,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Subscription::observe(SubscriptionObserver::class);
+        Product::observe(ProductObserver::class);
     }
 }
