@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserRegistered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -24,6 +25,7 @@ class AuthController extends Controller
         ]);
 
         $token = $user->createToken('main')->plainTextToken;
+        event(new UserRegistered($user));
 
         return response()->json(['token' => $token, 'user' => $user]);
     }
